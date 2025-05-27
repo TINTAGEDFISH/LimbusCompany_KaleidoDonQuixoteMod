@@ -20,7 +20,7 @@ game/BepInEx/unity-libs
 3.Build the .dll and place it in game/BepInEx/plugins.
 
 4.Optional: Drop the KaleidoDonQuixoteMod folder into the private server’s mod directory.
-(This step is only required if using pre-built personalities. Custom personalities are acceptable provided all skill IDs used by "Little Don" are included in your skill pool.)
+(This step is only required if using pre-built personalities. Custom personalities are acceptable provided all skill IDs used by "LCB DonQuixote" are included in your skill pool.)
 
 ### 注： 
 ### 1.此模组仅能在边狱巴士私人服务器使用 
