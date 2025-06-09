@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
@@ -195,17 +195,44 @@ namespace BaseMod
                     int currentRound = Singleton<StageController>.Instance.GetCurrentRound();
                     
                     Main.SharedLog.LogWarning(string.Format("Unit ID:{0},Unit data{1},Don faction{2}", model.GetUnitID(), model.Faction, Don.Faction));
-                    foreach (BattleUnitModel battleUnitModel in list)
-                    {
-                        if (battleUnitModel.Faction != Don.Faction)
-                        {
-                            enemylist.Add(battleUnitModel);
-                        }
-                    }
-                    
+					HashSet<int> bodyParents = new HashSet<int>();
+
+					// 第一阶段：收集所有身体部件对应的本体ID
+					foreach (BattleUnitModel unit in list)
+					{
+						int unitId = unit.GetUnitID();
+						// 识别身体部件（6位数字）并提取本体ID
+						if (unitId >= 100000)
+						{
+							int parentId = unitId / 100;
+							bodyParents.Add(parentId);
+						}
+					}
+
+					// 第二阶段：构建最终敌人列表
+					foreach (BattleUnitModel battleUnitModel in list)
+					{
+						if (battleUnitModel.Faction != Don.Faction)
+						{
+							int currentId = battleUnitModel.GetUnitID();
+
+							// 检查是否是本体（4位数字）
+							if (currentId >= 1000 && currentId <= 9999)
+							{
+								// 当存在对应的身体部件时跳过添加本体
+								if (bodyParents.Contains(currentId))
+								{
+									continue;
+								}
+							}
+
+							enemylist.Add(battleUnitModel);
+						}
+					}
 
 
-                }
+
+				}
                     
             }
             PassiveAbility dummyPassiveAbility = null;
@@ -656,7 +683,7 @@ namespace BaseMod
     {
         public const string Guid = Author + "." + Name;
         public const string Name = "KaleidoDonQuixote";
-        public const string Version = "0.0.1";
+        public const string Version = "0.0.2";
         public const string Author = "Tintagedfish";
         public static ManualLogSource SharedLog;
 
